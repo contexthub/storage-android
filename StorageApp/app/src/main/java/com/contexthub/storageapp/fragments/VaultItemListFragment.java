@@ -21,10 +21,13 @@ import com.chaione.contexthub.sdk.VaultProxy;
 import com.chaione.contexthub.sdk.callbacks.Callback;
 import com.chaione.contexthub.sdk.callbacks.VaultListingCallback;
 import com.chaione.contexthub.sdk.model.VaultDocument;
-import com.contexthub.storageapp.models.Person;
 import com.contexthub.storageapp.R;
+import com.contexthub.storageapp.models.Person;
+import com.contexthub.storageapp.models.PersonComparator;
 
 import org.parceler.apache.commons.lang.NotImplementedException;
+
+import java.util.Arrays;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -106,6 +109,7 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
     @Override
     public void onSuccess(VaultDocument<Person>[] vaultDocuments) {
         getActivity().setProgressBarIndeterminateVisibility(false);
+        Arrays.sort(vaultDocuments, new PersonComparator());
         PersonAdapter adapter = new PersonAdapter(getActivity(), vaultDocuments);
         list.setAdapter(adapter);
         list.setEmptyView(empty);
