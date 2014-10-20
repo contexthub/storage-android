@@ -3,6 +3,7 @@ package com.contexthub.storageapp;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,6 +19,8 @@ import com.contexthub.storageapp.models.Person;
 
 
 public class MainActivity extends FragmentActivity implements VaultItemListFragment.Listener, FragmentManager.OnBackStackChangedListener {
+
+    private MenuItem menuSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +44,8 @@ public class MainActivity extends FragmentActivity implements VaultItemListFragm
     }
 
     private void setupSearchView(final MenuItem menuSearch) {
+        this.menuSearch = menuSearch;
+
         SearchView searchView = (SearchView) menuSearch.getActionView();
 
         int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
@@ -80,6 +85,8 @@ public class MainActivity extends FragmentActivity implements VaultItemListFragm
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        menuSearch.collapseActionView();
+
         switch(item.getItemId()) {
             case R.id.action_add:
                 launchEditVaultItemFragment(null);
@@ -106,6 +113,7 @@ public class MainActivity extends FragmentActivity implements VaultItemListFragm
 
     @Override
     public void onItemClick(VaultDocument<Person> document) {
+        menuSearch.collapseActionView();
         launchEditVaultItemFragment(document);
     }
 
