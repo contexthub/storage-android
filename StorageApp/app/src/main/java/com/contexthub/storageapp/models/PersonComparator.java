@@ -11,7 +11,7 @@ public class PersonComparator implements Comparator<VaultDocument<Person>> {
 
     @Override
     public int compare(VaultDocument<Person> personVaultDocument, VaultDocument<Person> personVaultDocument2) {
-        return personVaultDocument.getDataObject().getName().compareTo(
-                personVaultDocument2.getDataObject().getName());
+        return personVaultDocument.getDataObject().getName().toLowerCase().compareTo(
+                personVaultDocument2.getDataObject().getName().toLowerCase());
     }
 }
