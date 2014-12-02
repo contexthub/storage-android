@@ -25,8 +25,6 @@ import com.contexthub.storageapp.R;
 import com.contexthub.storageapp.models.Person;
 import com.contexthub.storageapp.models.PersonComparator;
 
-import org.parceler.apache.commons.lang.NotImplementedException;
-
 import java.util.Arrays;
 
 import butterknife.ButterKnife;
@@ -69,7 +67,7 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
             listener = (Listener) activity;
         }
         else {
-            throw new NotImplementedException("Activity must implement Listener interface");
+            throw new IllegalArgumentException("Activity must implement Listener interface");
         }
         super.onAttach(activity);
     }

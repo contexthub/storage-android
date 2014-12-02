@@ -23,8 +23,6 @@ import com.chaione.contexthub.sdk.model.VaultDocument;
 import com.contexthub.storageapp.models.Person;
 import com.contexthub.storageapp.R;
 
-import org.parceler.Parcels;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -54,7 +52,7 @@ public class EditVaultItemFragment extends Fragment implements VaultCallback<Per
         EditVaultItemFragment fragment = new EditVaultItemFragment();
         Bundle args = new Bundle();
         args.putString(ARG_VAULT_ID, document.getVaultInfo().getId());
-        args.putParcelable(ARG_PERSON, Parcels.wrap(document.getDataObject()));
+        args.putParcelable(ARG_PERSON, document.getDataObject());
         fragment.setArguments(args);
         return fragment;
     }
@@ -78,7 +76,7 @@ public class EditVaultItemFragment extends Fragment implements VaultCallback<Per
         getActivity().setTitle(R.string.edit_vault_item);
         if(getArguments() != null && getArguments().containsKey(ARG_PERSON) && getArguments().containsKey(ARG_VAULT_ID)) {
             vaultId = getArguments().getString(ARG_VAULT_ID);
-            person = Parcels.unwrap(getArguments().getParcelable(ARG_PERSON));
+            person = getArguments().getParcelable(ARG_PERSON);
             bindPerson();
         }
         else {

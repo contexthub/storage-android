@@ -1,18 +1,15 @@
 package com.contexthub.storageapp.models;
 
-import org.parceler.Parcel;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
- * A {@link java.io.Serializable} object saved in the ContextHub vault. Uses the Parceler library
- * (https://github.com/johncarl81/parceler) to auto-generate the Parcelable implementation needed to
- * most efficiently pass the object between fragments. Yes, we could pass it as a serializable
- * extra, but that's just lazy.
+ * A {@link java.io.Serializable} object saved in the ContextHub vault.
  */
-@Parcel
-public class Person implements Serializable {
+public class Person implements Serializable, Parcelable {
 
     String name;
     String title;
@@ -66,4 +63,40 @@ public class Person implements Serializable {
         return String.format("name: %s\ntitle: %s\nnicknames: %s\nheightInInches: %s\nage: %s",
                 name, title, nicknames, heightInInches, age);
     }
+
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(this.name);
+        dest.writeString(this.title);
+        dest.writeSerializable(this.nicknames);
+        dest.writeInt(this.heightInInches);
+        dest.writeInt(this.age);
+    }
+
+    public Person() {
+    }
+
+    private Person(Parcel in) {
+        this.name = in.readString();
+        this.title = in.readString();
+        this.nicknames = (ArrayList<String>) in.readSerializable();
+        this.heightInInches = in.readInt();
+        this.age = in.readInt();
+    }
+
+    public static final Parcelable.Creator<Person> CREATOR = new Parcelable.Creator<Person>() {
+        public Person createFromParcel(Parcel source) {
+            return new Person(source);
+        }
+
+        public Person[] newArray(int size) {
+            return new Person[size];
+        }
+    };
 }

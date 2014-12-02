@@ -40,5 +40,4 @@ dependencies {
     compile 'com.android.support:appcompat-v7:21.0.+'
     compile 'com.chaione:contexthub:1.0.30'
     compile 'com.jakewharton:butterknife:5.1.2'
-    compile 'org.parceler:parceler:0.2.13'
 }
