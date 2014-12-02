@@ -1,14 +1,12 @@
 package com.contexthub.storageapp;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBarActivity;
+import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.widget.AutoCompleteTextView;
-import android.widget.SearchView;
 
 import com.chaione.contexthub.sdk.model.VaultDocument;
 import com.contexthub.storageapp.fragments.AboutFragment;
@@ -17,15 +15,14 @@ import com.contexthub.storageapp.fragments.VaultItemListFragment;
 import com.contexthub.storageapp.models.Person;
 
 
-public class MainActivity extends FragmentActivity implements VaultItemListFragment.Listener, FragmentManager.OnBackStackChangedListener {
+public class MainActivity extends ActionBarActivity implements VaultItemListFragment.Listener, FragmentManager.OnBackStackChangedListener {
 
     private MenuItem menuSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         super.onCreate(savedInstanceState);
-        setProgressBarIndeterminate(true);
+        setContentView(R.layout.activity_main);
 
         if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
@@ -45,17 +42,10 @@ public class MainActivity extends FragmentActivity implements VaultItemListFragm
     private void setupSearchView(final MenuItem menuSearch) {
         this.menuSearch = menuSearch;
 
-        SearchView searchView = (SearchView) menuSearch.getActionView();
-
-        int searchPlateId = searchView.getContext().getResources().getIdentifier("android:id/search_plate", null, null);
-        View searchPlate = searchView.findViewById(searchPlateId);
-        int searchTextId = searchPlate.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
-        AutoCompleteTextView searchText = (AutoCompleteTextView) searchPlate.findViewById(searchTextId);
-        if (searchText!=null) {
-            searchText.setHint(R.string.search_hint);
-        }
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menuSearch);
+        SearchView.SearchAutoComplete searchAutoComplete = (SearchView.SearchAutoComplete) searchView.findViewById(R.id.search_src_text);
+        searchAutoComplete.setHint(R.string.search_hint);
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 menuSearch.collapseActionView();

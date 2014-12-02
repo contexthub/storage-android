@@ -1,9 +1,11 @@
 package com.contexthub.storageapp.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -47,6 +49,7 @@ public class EditVaultItemFragment extends Fragment implements VaultCallback<Per
 
     String vaultId = null;
     Person person;
+    ProgressDialog progressDialog;
 
     public static EditVaultItemFragment newInstance(VaultDocument<Person> document) {
         EditVaultItemFragment fragment = new EditVaultItemFragment();
@@ -73,7 +76,7 @@ public class EditVaultItemFragment extends Fragment implements VaultCallback<Per
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        getActivity().setTitle(R.string.edit_vault_item);
+        ((ActionBarActivity) getActivity()).getSupportActionBar().setTitle(R.string.edit_vault_item);
         if(getArguments() != null && getArguments().containsKey(ARG_PERSON) && getArguments().containsKey(ARG_VAULT_ID)) {
             vaultId = getArguments().getString(ARG_VAULT_ID);
             person = getArguments().getParcelable(ARG_PERSON);
@@ -154,7 +157,7 @@ public class EditVaultItemFragment extends Fragment implements VaultCallback<Per
         person.setHeightInInches(heightSeekBar.getProgress());
         person.setNicknames(parseNicknames());
 
-        getActivity().setProgressBarIndeterminateVisibility(true);
+        progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.saving_vault_item), true, false);
         VaultProxy<Person> proxy = new VaultProxy<Person>();
         if(vaultId == null) {
             // Submit a request to ContextHub to create the document
@@ -194,7 +197,7 @@ public class EditVaultItemFragment extends Fragment implements VaultCallback<Per
      */
     @Override
     public void onSuccess(VaultDocument<Person> personVaultDocument) {
-        getActivity().setProgressBarIndeterminateVisibility(false);
+        if(progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
         Toast.makeText(getActivity(), vaultId == null ? R.string.vault_item_created :
                 R.string.vault_item_updated, Toast.LENGTH_SHORT).show();
         getFragmentManager().popBackStack();
@@ -206,7 +209,7 @@ public class EditVaultItemFragment extends Fragment implements VaultCallback<Per
      */
     @Override
     public void onFailure(Exception e) {
-        getActivity().setProgressBarIndeterminateVisibility(false);
+        if(progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
     }
 }

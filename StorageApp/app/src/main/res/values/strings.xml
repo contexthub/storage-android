@@ -30,4 +30,7 @@
     <string name="version_info">Version %1$s (%2$s)</string>
     <string name="about">About</string>
     <string name="contexthub_url">http://contexthub.com</string>
+    <string name="saving_vault_item">Saving vault item...</string>
+    <string name="loading_vault_items">Loading vault items...</string>
+    <string name="deleting_vault_item">Deleting vault item...</string>
 </resources>

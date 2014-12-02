@@ -2,11 +2,14 @@ package com.contexthub.storageapp.fragments;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +45,7 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
 
     VaultProxy<Person> proxy = new VaultProxy<Person>();
     Listener listener;
+    ProgressDialog progressDialog;
 
     public interface Listener {
         public void onItemClick(VaultDocument<Person> document);
@@ -85,17 +89,18 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
     }
 
     private void loadItems() {
-        getActivity().setProgressBarIndeterminateVisibility(true);
+        progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.loading_vault_items), true, false);
         String[] tags = new String[]{"sample"};
+        ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
         if(getArguments() != null && getArguments().containsKey(ARG_QUERY)) {
             String query = getArguments().getString(ARG_QUERY);
-            getActivity().getActionBar().setTitle(getString(R.string.search_for_title, query));
+            actionBar.setTitle(getString(R.string.search_for_title, query));
             // Query ContextHub for vault documents with a "sample" tag and name value matching the search string
             proxy.listDocuments("name", query, tags, Person.class, this);
         }
         else {
             // Query ContextHub for vault documents with a "sample" tag
-            getActivity().getActionBar().setTitle(R.string.vault_items);
+            actionBar.setTitle(R.string.vault_items);
             proxy.listDocuments(tags, Person.class, this);
         }
     }
@@ -106,7 +111,7 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
      */
     @Override
     public void onSuccess(VaultDocument<Person>[] vaultDocuments) {
-        getActivity().setProgressBarIndeterminateVisibility(false);
+        dismissProgressDialog();
         Arrays.sort(vaultDocuments, new PersonComparator());
         PersonAdapter adapter = new PersonAdapter(getActivity(), vaultDocuments);
         list.setAdapter(adapter);
@@ -121,8 +126,12 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
      */
     @Override
     public void onFailure(Exception e) {
-        getActivity().setProgressBarIndeterminateVisibility(false);
+        dismissProgressDialog();
         Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void dismissProgressDialog() {
+        if(progressDialog != null && progressDialog.isShowing()) progressDialog.dismiss();
     }
 
     @Override
@@ -145,7 +154,7 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        getActivity().setProgressBarIndeterminateVisibility(true);
+                        progressDialog = ProgressDialog.show(getActivity(), null, getString(R.string.deleting_vault_item), true, false);
                         // Submit a request to ContextHub to delete the specified vault document
                         proxy.deleteDocument(document.getVaultInfo().getId(), deleteCallback);
                     }
@@ -168,7 +177,7 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
          */
         @Override
         public void onSuccess(Object o) {
-            getActivity().setProgressBarIndeterminateVisibility(false);
+            dismissProgressDialog();
             Toast.makeText(getActivity(), R.string.vault_item_deleted, Toast.LENGTH_SHORT).show();
             loadItems();
         }
@@ -179,7 +188,7 @@ public class VaultItemListFragment extends Fragment implements VaultListingCallb
          */
         @Override
         public void onFailure(Exception e) {
-            getActivity().setProgressBarIndeterminateVisibility(false);
+            dismissProgressDialog();
             Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     };
